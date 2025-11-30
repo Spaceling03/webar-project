@@ -2,12 +2,16 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- MindAR (use UNPKG to avoid CORB) -->
-  <script src="https://unpkg.com/mind-ar-image@1.2.2/dist/mindar-image.prod.js"></script>
-  <script src="https://unpkg.com/mind-ar-image@1.2.2/dist/mindar-image-aframe.prod.js"></script>
-  <script src="https://unpkg.com/mind-ar-image@1.2.2/dist/mindar-image-three.prod.js"></script>
+  <!-- LOCAL MindAR (NO CORB, NO CDN) -->
+  <script src="./mindar/mindar-image.prod.js"></script>
+  <script src="./mindar/mindar-image-aframe.prod.js"></script>
+  <script src="./mindar/mindar-image-three.prod.js"></script>
+
+  <!-- Workers -->
+  <script src="./mindar/compiler.worker.prod.js"></script>
+  <script src="./mindar/controller.worker.prod.js"></script>
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
@@ -16,8 +20,8 @@
     html, body {
       margin: 0;
       padding: 0;
-      width: 100%;
       height: 100%;
+      width: 100%;
       overflow: hidden;
       background: black;
     }
@@ -25,27 +29,45 @@
 </head>
 
 <body>
-  <mindar-image-ar 
+
+  <!-- MindAR root -->
+  <mindar-image-ar
     image-target-src="./targets.mind"
     auto-start="true"
     ui-loading="yes"
-    ui-error="yes">
+    ui-error="yes"
+    ui-scanning="yes">
 
     <a-scene
-      mindar-image
+      mindar-image="uiEnabled: true"
       embedded
       renderer="colorManagement: true; physicallyCorrectLights: true"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: true">
 
-      <!-- test cube -->
+      <!-- LIGHTS (helps OBJ show correctly) -->
+      <a-entity light="type: ambient; intensity: 1"></a-entity>
+      <a-entity light="type: directional; intensity: 0.8" position="1 1 1"></a-entity>
+
+      <!-- Track marker 0 -->
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-box color="red" width="0.2" height="0.2" depth="0.2"></a-box>
+
+        <!-- Spawn OBJ model -->
+        <a-obj-model
+          src="./assets/models/ball.obj"
+          mtl="./assets/models/ball.mtl"
+          scale="0.3 0.3 0.3"
+          position="0 0 0"
+          rotation="0 0 0">
+        </a-obj-model>
+
       </a-entity>
 
-      <a-camera></a-camera>
+      <a-camera position="0 0 0"></a-camera>
+
     </a-scene>
 
   </mindar-image-ar>
+
 </body>
 </html>
