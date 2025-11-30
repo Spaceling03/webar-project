@@ -2,48 +2,41 @@
 <html>
 <head>
   <meta charset="UTF-8" />
+  <title>ExpeditionGo WebAR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- 1. A-Frame (MUST BE FIRST!) -->
+  <!-- 1. A-Frame MUST load before MindAR A-Frame -->
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 
-  <!-- FIX: Tell MindAR where workers are -->
+  <!-- 2. Tell MindAR where workers/wasm live (same /mindar folder) -->
   <script>
-    window.MINDAR = {
-      IMAGE: {
-        workerPath: './mindar/',
-        wasmPath: './mindar/',
-      }
-    };
+    window.MINDAR = window.MINDAR || {};
+    window.MINDAR.IMAGE = Object.assign({}, window.MINDAR.IMAGE, {
+      workerPath: './mindar/',
+      wasmPath: './mindar/',
+    });
   </script>
 
-  <!-- 2. MindAR Core -->
+  <!-- 3. Local MindAR scripts -->
   <script src="./mindar/mindar-image.prod.js"></script>
-
-  <!-- 3. MindAR A-Frame Integration -->
   <script src="./mindar/mindar-image-aframe.prod.js"></script>
-
-  <!-- 4. MindAR THREE Integration (required by A-Frame version) -->
   <script src="./mindar/mindar-image-three.prod.js"></script>
-
-  <!-- 5. Workers (must be available before scene loads) -->
-  <script src="./mindar/compiler.worker.prod.js"></script>
-  <script src="./mindar/controller.worker.prod.js"></script>
 
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
       width: 100%;
       height: 100%;
-      background: black;
+      overflow: hidden;
+      background: #000;
     }
   </style>
 </head>
 
 <body>
 
+  <!-- MindAR root, using the targets.mind in repo root -->
   <mindar-image-ar
     image-target-src="./targets.mind"
     auto-start="true"
@@ -52,20 +45,29 @@
     ui-error="yes">
 
     <a-scene
-      embedded
       mindar-image="uiEnabled: true"
+      embedded
+      renderer="colorManagement: true; physicallyCorrectLights: true"
       vr-mode-ui="enabled: false"
-      device-orientation-permission-ui="enabled: true"
-      renderer="colorManagement: true; physicallyCorrectLights: true">
+      device-orientation-permission-ui="enabled: true">
 
-      <a-entity light="type: ambient; intensity: 1"></a-entity>
+      <!-- Lights so the OBJ isn’t dark -->
+      <a-entity light="type: ambient; intensity: 0.8"></a-entity>
+      <a-entity light="type: directional; intensity: 0.8" position="1 2 1"></a-entity>
 
+      <!-- Attach content to first target (index 0 in targets.mind) -->
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-box color="red" scale="0.2 0.2 0.2"></a-box>
+        <!-- Your 3D model -->
+        <a-obj-model
+          src="./src/assets/models/ball.obj"
+          mtl="./src/assets/models/ball.mtl"
+          scale="0.25 0.25 0.25"
+          position="0 0 0"
+          rotation="0 0 0">
+        </a-obj-model>
       </a-entity>
 
-      <a-camera></a-camera>
-
+      <a-camera position="0 0 0"></a-camera>
     </a-scene>
 
   </mindar-image-ar>
