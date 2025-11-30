@@ -3,25 +3,37 @@
   <head>
     <meta charset="utf-8" />
 
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-prod.js"></script>
+    <!-- MindAR (image tracking) -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image.prod.js"></script>
+
+    <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 
     <style>
-      body, html { margin: 0; padding: 0; overflow: hidden; }
+      body, html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
     </style>
   </head>
 
   <body>
-    <mindar-image-ar image-target-src="./target.mind" auto-start="true">
+    <!-- MindAR: use your targets.mind file -->
+    <mindar-image-ar image-target-src="./targets.mind" auto-start="true">
       <a-scene mindar-image embedded vr-mode-ui="enabled: false">
 
-        <!-- 3D model anchored to your image marker -->
+        <!-- Anchor on your first marker -->
         <a-entity mindar-image-target="targetIndex: 0">
-          <a-gltf-model
-            src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-            scale="0.15 0.15 0.15"
-            position="0 0 0">
-          </a-gltf-model>
+
+          <!-- 🔥 Spawn your OBJ model on the marker -->
+          <a-obj-model
+            src="src/assets/models/ball.obj"
+            position="0 0 0"
+            scale="0.1 0.1 0.1"
+            rotation="0 0 0">
+          </a-obj-model>
+
         </a-entity>
 
         <a-camera></a-camera>
