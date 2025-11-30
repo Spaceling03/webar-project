@@ -1,76 +1,63 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8" />
-  <title>ExpeditionGo WebAR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- 1. A-Frame MUST load before MindAR A-Frame -->
-  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
-  <!-- 2. Tell MindAR where workers/wasm live (same /mindar folder) -->
-  <script>
-    window.MINDAR = window.MINDAR || {};
-    window.MINDAR.IMAGE = Object.assign({}, window.MINDAR.IMAGE, {
-      workerPath: './mindar/',
-      wasmPath: './mindar/',
-    });
-  </script>
+    <!-- MindAR Core -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
 
-  <!-- 3. Local MindAR scripts -->
-  <script src="./mindar/mindar-image.prod.js"></script>
-  <script src="./mindar/mindar-image-aframe.prod.js"></script>
-  <script src="./mindar/mindar-image-three.prod.js"></script>
+    <!-- MindAR A-Frame Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #000;
-    }
-  </style>
-</head>
+    <style>
+      body, html {
+        margin: 0;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
 
-<body>
-
-  <!-- MindAR root, using the targets.mind in repo root -->
-  <mindar-image-ar
-    image-target-src="./targets.mind"
-    auto-start="true"
-    ui-scanning="yes"
-    ui-loading="yes"
-    ui-error="yes">
-
-    <a-scene
-      mindar-image="uiEnabled: true"
-      embedded
-      renderer="colorManagement: true; physicallyCorrectLights: true"
+  <body>
+    <a-scene 
+      mindar-image="imageTargetSrc: ./targets.mind;"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights: true"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: true">
 
-      <!-- Lights so the OBJ isn’t dark -->
-      <a-entity light="type: ambient; intensity: 0.8"></a-entity>
-      <a-entity light="type: directional; intensity: 0.8" position="1 2 1"></a-entity>
+      <a-assets>
+        <!-- Your target preview -->
+        <img id="icats" src="./icats.png" />
 
-      <!-- Attach content to first target (index 0 in targets.mind) -->
+        <!-- Your model (OBJ + MTL) -->
+        <a-asset-item id="ball" src="./src/assets/models/ball.obj"></a-asset-item>
+        <a-asset-item id="ballMtl" src="./src/assets/models/ball.mtl"></a-asset-item>
+      </a-assets>
+
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <!-- Track first image -->
       <a-entity mindar-image-target="targetIndex: 0">
-        <!-- Your 3D model -->
-        <a-obj-model
-          src="./src/assets/models/ball.obj"
-          mtl="./src/assets/models/ball.mtl"
-          scale="0.25 0.25 0.25"
-          position="0 0 0"
-          rotation="0 0 0">
-        </a-obj-model>
+
+        <!-- Show image preview when detected -->
+        <a-plane src="#icats" height="0.55" width="1"></a-plane>
+
+        <!-- Your OBJ model -->
+        <a-entity 
+          obj-model="obj: #ball; mtl: #ballMtl"
+          position="0 0 0.1"
+          scale="0.3 0.3 0.3"
+          animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+        </a-entity>
+
       </a-entity>
 
-      <a-camera position="0 0 0"></a-camera>
     </a-scene>
-
-  </mindar-image-ar>
-
-</body>
+  </body>
 </html>
