@@ -1,47 +1,83 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-    <!-- MindAR -->
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar-image@1.2.2/dist/mindar-image.prod.js"></script>
+  <!-- MindAR: correct library -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar-image@1.2.2/dist/mindar-image.prod.js"></script>
 
-    <!-- A-Frame -->
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background: black;
+    }
+  </style>
+
+  <script>
+    // 🔥 FORCE CAMERA PERMISSION ON ALL DEVICES
+    async function requestCamera() {
+      try {
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        console.log("Camera access granted");
+      } catch (e) {
+        alert("Camera permission REQUIRED for AR.\nPlease enable it manually.");
+        console.error(e);
       }
-    </style>
-  </head>
+    }
 
-  <body>
-    <mindar-image-ar
-        image-target-src="./targets.mind"
-        auto-start="true">
+    // 🔥 FOR iOS & some Android WebView orientation permission
+    async function requestOrientation() {
+      if (typeof DeviceOrientationEvent !== "undefined" &&
+          DeviceOrientationEvent.requestPermission) {
+        try {
+          await DeviceOrientationEvent.requestPermission();
+        } catch (err) {
+          console.log("Orientation permission error", err);
+        }
+      }
+    }
 
-      <a-scene
-          mindar-image
-          embedded
-          color-space="sRGB"
-          renderer="colorManagement: true, physicallyCorrectLights: true"
-          vr-mode-ui="enabled: false"
-          device-orientation-permission-ui="enabled: true">
+    document.addEventListener("DOMContentLoaded", async () => {
+      await requestCamera();
+      await requestOrientation();
+    });
+  </script>
+</head>
 
-        <!-- TARGET INDEX 0 -->
-        <a-entity mindar-image-target="targetIndex: 0">
-          <a-box color="blue" depth="0.1" height="0.1" width="0.1"></a-box>
-        </a-entity>
+<body>
+  <mindar-image-ar 
+    image-target-src="./targets.mind"
+    auto-start="true"
+    ui-loading="yes"
+    ui-error="yes">
 
-        <a-camera></a-camera>
-      </a-scene>
+    <a-scene
+      mindar-image
+      embedded
+      renderer="colorManagement: true; physicallyCorrectLights: true"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: true">
 
-    </mindar-image-ar>
-  </body>
+      <!-- Test cube -->
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-box 
+          color="red"
+          position="0 0 0"
+          depth="0.1" height="0.1" width="0.1">
+        </a-box>
+      </a-entity>
+
+      <a-camera></a-camera>
+    </a-scene>
+
+  </mindar-image-ar>
+</body>
 </html>
