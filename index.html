@@ -4,25 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- LOCAL MindAR (NO CORB, NO CDN) -->
+  <!-- 1. A-Frame (MUST BE FIRST!) -->
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+
+  <!-- FIX: Tell MindAR where workers are -->
+  <script>
+    window.MINDAR = {
+      IMAGE: {
+        workerPath: './mindar/',
+        wasmPath: './mindar/',
+      }
+    };
+  </script>
+
+  <!-- 2. MindAR Core -->
   <script src="./mindar/mindar-image.prod.js"></script>
+
+  <!-- 3. MindAR A-Frame Integration -->
   <script src="./mindar/mindar-image-aframe.prod.js"></script>
+
+  <!-- 4. MindAR THREE Integration (required by A-Frame version) -->
   <script src="./mindar/mindar-image-three.prod.js"></script>
 
-  <!-- Workers -->
+  <!-- 5. Workers (must be available before scene loads) -->
   <script src="./mindar/compiler.worker.prod.js"></script>
   <script src="./mindar/controller.worker.prod.js"></script>
-
-  <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      width: 100%;
       overflow: hidden;
+      width: 100%;
+      height: 100%;
       background: black;
     }
   </style>
@@ -30,40 +44,27 @@
 
 <body>
 
-  <!-- MindAR root -->
   <mindar-image-ar
     image-target-src="./targets.mind"
     auto-start="true"
+    ui-scanning="yes"
     ui-loading="yes"
-    ui-error="yes"
-    ui-scanning="yes">
+    ui-error="yes">
 
     <a-scene
-      mindar-image="uiEnabled: true"
       embedded
-      renderer="colorManagement: true; physicallyCorrectLights: true"
+      mindar-image="uiEnabled: true"
       vr-mode-ui="enabled: false"
-      device-orientation-permission-ui="enabled: true">
+      device-orientation-permission-ui="enabled: true"
+      renderer="colorManagement: true; physicallyCorrectLights: true">
 
-      <!-- LIGHTS (helps OBJ show correctly) -->
       <a-entity light="type: ambient; intensity: 1"></a-entity>
-      <a-entity light="type: directional; intensity: 0.8" position="1 1 1"></a-entity>
 
-      <!-- Track marker 0 -->
       <a-entity mindar-image-target="targetIndex: 0">
-
-        <!-- Spawn OBJ model -->
-        <a-obj-model
-          src="./assets/models/ball.obj"
-          mtl="./assets/models/ball.mtl"
-          scale="0.3 0.3 0.3"
-          position="0 0 0"
-          rotation="0 0 0">
-        </a-obj-model>
-
+        <a-box color="red" scale="0.2 0.2 0.2"></a-box>
       </a-entity>
 
-      <a-camera position="0 0 0"></a-camera>
+      <a-camera></a-camera>
 
     </a-scene>
 
