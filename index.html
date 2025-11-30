@@ -4,35 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-  <!-- Correct MindAR package -->
+  <!-- MindAR REQUIRED SCRIPTS (all 3!) -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar-image@1.2.2/dist/mindar-image.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar-image@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar-image@1.2.2/dist/mindar-image-three.prod.js"></script>
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 
   <style>
     html, body {
+      width: 100%;
+      height: 100%;
       margin: 0;
       padding: 0;
       overflow: hidden;
-      width: 100%;
-      height: 100%;
       background: black;
     }
   </style>
-
-  <script>
-    // FORCE CAMERA
-    async function forceCameraPermission() {
-      try {
-        await navigator.mediaDevices.getUserMedia({ video: true });
-      } catch (err) {
-        alert("Enable camera permission to use AR.");
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", forceCameraPermission);
-  </script>
 </head>
 
 <body>
@@ -45,13 +34,13 @@
     <a-scene
       mindar-image
       embedded
-      color-space="sRGB"
       renderer="colorManagement: true; physicallyCorrectLights: true"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: true">
 
+      <!-- TEST CUBE -->
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-box color="red" width="0.1" height="0.1" depth="0.1"></a-box>
+        <a-box color="red" width="0.2" height="0.2" depth="0.2"></a-box>
       </a-entity>
 
       <a-camera></a-camera>
