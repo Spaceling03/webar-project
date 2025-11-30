@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-  <!-- MindAR: correct library -->
+  <!-- Correct MindAR package -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar-image@1.2.2/dist/mindar-image.prod.js"></script>
 
   <!-- A-Frame -->
@@ -22,33 +22,16 @@
   </style>
 
   <script>
-    // 🔥 FORCE CAMERA PERMISSION ON ALL DEVICES
-    async function requestCamera() {
+    // FORCE CAMERA
+    async function forceCameraPermission() {
       try {
         await navigator.mediaDevices.getUserMedia({ video: true });
-        console.log("Camera access granted");
-      } catch (e) {
-        alert("Camera permission REQUIRED for AR.\nPlease enable it manually.");
-        console.error(e);
+      } catch (err) {
+        alert("Enable camera permission to use AR.");
       }
     }
 
-    // 🔥 FOR iOS & some Android WebView orientation permission
-    async function requestOrientation() {
-      if (typeof DeviceOrientationEvent !== "undefined" &&
-          DeviceOrientationEvent.requestPermission) {
-        try {
-          await DeviceOrientationEvent.requestPermission();
-        } catch (err) {
-          console.log("Orientation permission error", err);
-        }
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      await requestCamera();
-      await requestOrientation();
-    });
+    document.addEventListener("DOMContentLoaded", forceCameraPermission);
   </script>
 </head>
 
@@ -56,23 +39,19 @@
   <mindar-image-ar 
     image-target-src="./targets.mind"
     auto-start="true"
-    ui-loading="yes"
-    ui-error="yes">
+    ui-error="yes"
+    ui-loading="yes">
 
     <a-scene
       mindar-image
       embedded
+      color-space="sRGB"
       renderer="colorManagement: true; physicallyCorrectLights: true"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: true">
 
-      <!-- Test cube -->
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-box 
-          color="red"
-          position="0 0 0"
-          depth="0.1" height="0.1" width="0.1">
-        </a-box>
+        <a-box color="red" width="0.1" height="0.1" depth="0.1"></a-box>
       </a-entity>
 
       <a-camera></a-camera>
