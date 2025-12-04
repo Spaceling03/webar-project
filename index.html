@@ -7,6 +7,9 @@
     <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
+    <!-- A-Frame Extras (fixes OBJ + MTL loading) -->
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.loaders.min.js"></script>
+
     <!-- MindAR Core -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
 
@@ -24,40 +27,58 @@
   </head>
 
   <body>
-    <a-scene 
+    <a-scene
       mindar-image="imageTargetSrc: ./targets.mind;"
-      color-space="sRGB"
-      renderer="colorManagement: true, physicallyCorrectLights: true"
       vr-mode-ui="enabled: false"
-      device-orientation-permission-ui="enabled: true">
+      device-orientation-permission-ui="enabled: true"
+      renderer="colorManagement: true; physicallyCorrectLights: true">
 
       <a-assets>
-        <!-- Your target preview -->
-        <img id="icats" src="./icats.png" />
+        <!-- Target image -->
+        <img id="icats" src="./icats.png">
 
-        <!-- Your model (OBJ + MTL) -->
-        <a-asset-item id="ball" src="./src/assets/models/ball.obj"></a-asset-item>
-        <a-asset-item id="ballMtl" src="./src/assets/models/ball.mtl"></a-asset-item>
+        <!-- Ball OBJ + MTL -->
+        <a-asset-item id="ball-obj" src="./src/assets/models/ball.obj"></a-asset-item>
+        <a-asset-item id="ball-mtl" src="./src/assets/models/ball.mtl"></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <!-- Track first image -->
       <a-entity mindar-image-target="targetIndex: 0">
 
-        <!-- Show image preview when detected -->
+        <!-- Plane (shows your pattern preview when detected) -->
         <a-plane src="#icats" height="0.55" width="1"></a-plane>
 
-        <!-- Your OBJ model -->
-        <a-entity 
-          obj-model="obj: #ball; mtl: #ballMtl"
+        <!-- 3D OBJ Model -->
+        <a-entity
+          id="ball"
+          obj-model="obj: #ball-obj; mtl: #ball-mtl"
           position="0 0 0.1"
-          scale="0.3 0.3 0.3"
-          animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+          scale="0.4 0.4 0.4"
+          animation="property: position; to: 0 0.1 0.1; dur: 1000; loop: true; dir: alternate">
         </a-entity>
 
       </a-entity>
 
     </a-scene>
+
+    <!-- JS → ANDROID BRIDGE -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const scene = document.querySelector("a-scene");
+
+        scene.addEventListener("targetFound", () => {
+          console.log("TARGET FOUND");
+          if (window.Android) {
+            window.Android.patternDetected("true");
+          }
+        });
+
+        scene.addEventListener("targetLost", () => {
+          console.log("TARGET LOST");
+        });
+      });
+    </script>
+
   </body>
 </html>
